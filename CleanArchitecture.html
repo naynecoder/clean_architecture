@@ -1,0 +1,342 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Clean Architecture - An Overview</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Clean Architecture</h1>
+					<h2>by Robert C. Martin</h2>
+					<p>An Overview</p>
+				</section>
+				<section>
+					<h2>SOLID Principles</h2>
+					<p>Create software structures that:</p>
+					<ul>
+						<li>Tolerate changes</li>
+						<li>Are easy to understand</li>
+						<li>Are basis of components</li>
+					</ul>
+				</section>
+				<section>
+					<h3>SRP: Single Responsability Principle</h3>
+					<p><strong>A module should be responsible to one, and only one, actor</strong></p>
+					<p>Usually mistaken with "a function should do one, and only one, thing", which is true anyway</p>
+					<p><em>A module is a cohesive set of functions and data structures</em></p>
+				</section>
+				<section>
+					<h3>SRP Example</h3>
+					<p>Employee class:
+					<ul>
+						<li>Employee Data</li>
+						<li>calculatePay() - depends on Accounting Dep.</li>
+						<li>reportHours() - depends on Human Resources</li>
+						<li>save() - depends on IT Administrator</li>
+					</ul>
+					</p>
+				</section>
+				<section>
+					
+						<p>Three actors have been coupled in the same class:<br>					
+							if calculatePay() and reportHours() share a function and the Accounting Department needs a change, that change might impact on a function also used by Human Resources
+						</p>
+				
+				</section>
+				<section>
+					<section id="fragments">
+					<p>Solution: Decouple in classes per actors</p>
+						<ul class="fragment">
+							<li>EmployeeData Class</li>
+							<li>PayCalculatorClass - calculatePay()</li>
+							<li>HourReporterClass - reportHours()</li>
+							<li>EmployeeSaverClass - save()</li>
+						</ul>
+					
+					</section>				
+				</section>
+				<section>
+					<h3>OCP: Open Closed Principle</h3>
+					<p><strong>A software artifact should be open for extension but closed for modification</strong></p>					
+				</section>
+				<section>					
+					<p>Next diagram describes a simple system to generate reports, the arrows point to their dependency.</p>
+				</section>
+				<section>					
+					<img src="diagrams/OCP.svg"/>
+				</section>
+				<section>	
+					<section id="fragments">
+					<div id="left" style="font-size:75%">				
+					<p><span class="customTextHighlight">Screen Presenter</span> doesn't need to know about <span class="customTextHighlight">Web View</span>, and <span class="customTextHighlight">Report Controller</span> does not need to know about <span class="customTextHighlight">Screen Presenter</span></p>					
+					<p class="fragment">Any change on <span class="customTextHighlight">Web View</span> won't affect <span class="customTextHighlight">Screen Presenter</p>
+					<p class="fragment">Changes on <span class="customTextHighlight">Screen Presenter</span> won't impact <span class="customTextHighlight">Report Controller</span></p>
+					<p class="fragment"><span class="customTextHighlight">Report Interaction</span> is protected from changes made in the whole system</p>
+					<p class="fragment">It can be accomplished through Dependency Injection</p>
+					</div>
+					<div id="right">
+						<img src="diagrams/OCP.svg"/>
+					</div>
+					</section>
+				</section>
+				<section>
+					<h3>LSP: Liskov Substitution</h3>
+					<p>Functions that use base classes must be able to use objects derived from the base classes without knowing it</p>	
+				</section>
+				<section>					
+					<p>Common problem of Ellipse inheriting from Circle base class, or Square inheriting from Rectangle Square class</p>
+					<p>If derived classes invalidate certain premises of the base class, LSP is violated</p>
+					<p>It can be detected because we are using "if instance of" or check special cases</p>				
+				</section>
+				<section>
+					<h3>ISP: Interface Segregation Principle</h3>
+					<p>Don't depend on classes that have methods that you don't need</p>	
+				</section>
+				<section>
+					<div id="left">					
+						<img src="diagrams/ISP.svg"/>
+					</div>
+					<div id="right" style="font-size=65%">					
+						<ul>
+						<li>Three classes use three different methods contained in the same Ops class</li>
+						<li>If just one of the methods changes, Ops will need to be recompiled, probably the three User classes too</li>
+						</ul>
+					</div>
+				</section>
+				<section>
+					<div id="left">					
+						<img src="diagrams/ISP2.svg"/>
+					</div>
+					<div id="right" style="font-size=65%">					
+						<p>ISP recommends segregating the three methods in three interfaces, and implement them in Ops class</p>
+					</div>
+				</section>
+				<section>
+					<h3>DIP: Dependency Inversion Principle</h3>
+					<p>Most flexible systems are those in which source code dependencies refer only to abstractions</p>	
+				</section>
+				<section>
+					<p>Import, Use, Include... Should refer to source modules containing interfaces or abstract classes</p>
+					<p>Use concrete dependencies on stable classes (like String class in Java)</p>	
+				</section>
+				<section>
+				<section id="fragments">
+					<p>Don't refer to volatile concrete classes, but to abstract interfaces</p>
+					<p class="fragment">Don't derive from volatile concrete classes</p>
+					<p class="fragment">Don't override concrete functions</p>		
+				</section>
+				</section>
+				<section>
+					<h2>Components</h2>
+					<p>The art of grouping classes</p>					
+				</section>
+				<section>
+					<h3>REP: Reuse/Release Equivalence Principle</h3>
+					<p>Classes and modules that are grouped together into a Component should be released together</p>					
+				</section>
+				<section>
+					<h3>CCP: Common Closure Principle</h3>
+					<p>Gather into Components classes that change at the same time and for the same reasons. Separate into different Components classes that change at different times and for different reasons.</p>					
+					<p>It's the SRP (Single Responsability Principle) and OCP (Open Closed Principle) version for architectures</p>
+				</section>
+				<section>
+					<h3>CRP: Common Reuse Principle</h3>
+					<p>Don't force users of a component to depend on things we don't need.</p>
+					<p>ISP (Interface Segregation Principle) version for architectures</p>										
+				</section>
+				<section>
+					<p>Tension between Component Principles</p>
+					<img src="diagrams/Tension.svg"/>
+				</section>
+				<section>		
+					<p>The needs for the project vary along time.</p>
+					<p>The architecture must be adapted to balance the tension according to these needs.</p>
+				</section>
+				<section>
+					<h3>Component Coupling</h3>
+					<div style="font-size:65%">
+					<p>Directed Acyclic Graph (DAG): No cycles, it's impossible to follow the arrows to go back to a component</p>
+					<p>Every change will affect a very limited number of Components</p>
+					</div>
+					<img src="diagrams/DAG.svg"/>
+				</section>
+				<section>
+					<p>What happens if Entities must use Permissions, which depends on Authorizer?</p>
+					<p>A cycle appears</p>
+					<img src="diagrams/DAG2.svg"/>
+				</section>
+				<section>
+					<p><strong>Breaking the cycle - Solution 1</strong></p>
+					<p>Create a new Component, make both Entities and Authorizer depend on it:</p>
+					<p>Move the classes that both need to that Component.</p>
+					<p>The complexity of the system will be increased.</p>
+				</section>
+				<section>
+					<p><strong>Breaking the cycle - Solution 2</strong></p>
+					<p>Apply Dependency Inversion Principle:</p>
+					<p>An interface will have the methods the Entities needs.</p>
+					<p>Put that interface into Entities and inherit it into Authorizer.</p>
+					<p>Dependency Injection.</p>
+				</section>
+				<section>					
+					<img src="diagrams/DI.svg"/>
+				</section>
+				<section>
+					<h3>SDP: Stable Dependency Principle</h3>
+					<p>Depend on Stable modules/classes, not on volatile ones</p>
+				</section>
+				<section>
+					<p>How to measure volatility?</p>
+				</section>
+				<section>
+					<p>Metrics</p>
+					<div style="font-size:65%">
+					<ul>
+					<li>Fan in: Incoming Dependencies. Number of classes outside this Component that depends on classes within the Component</li>
+					<li>Fan out: Outgoing Dependencies. Number of classes inside this Component that depends on classes outside the Component</li>
+					<li>Instability: I = FanOut/(FanIn+FanOut)</li>
+					<li>I=0 Maximum Stability. Changes will affect many modules</li>
+					<li>I=1 Maximum Unstability. No module depend on it, no reason not to change</li>
+					</ul>
+					</div>
+				</section>
+				<section>
+					<p>Instability sould decrease in the direction of dependency</p>
+					<img src="diagrams/SDP.svg"/>
+				</section>
+				<section>
+					<p>Wrong</p>
+					<img src="diagrams/SDP2.svg"/>
+				</section>
+				<section>
+					<p>Solution with Dependency Injection</p>
+					<img src="diagrams/SDP3.svg"/>
+				</section>
+				<section>
+					<h3>SAP: Stable Abstraction Principles</h3>
+					<p>A component should be as abstract as it is stable. Its stability does not prevent from being extended.</p>
+				</section>
+				<section>
+					<p>Metrics for abstractions</p>
+					<ul>
+					<li>Nc: Number of classes in the Component</li>
+					<li>Na: Number of abstract classes and interfaces in the Component</li>
+					<li>Abstractness: A = Na/NC</li>
+					</ul>
+				</section>
+				<section>
+					<p>Now we can compare Abstractness and Stability</p>	
+					<img src="diagrams/SAP.svg"/>			
+				</section>
+				<section>
+					<p><strong>Zone of Pain:</strong> Very stable, very concrete, hard to change many dependants (String class, database schema, Utils).</p>
+					<p><strong>Zone of Uselesness:</strong> High abstraction, little amount of dependants. Undesirable.</p>
+					
+				</section>
+				<section>
+					<p>Distance from the Main Sequence</p>
+					<ul>
+					<li>D = |A + I -1|</li>
+					<li>D=0 It's in the Main Sequence. Good</li>
+					<li>D=1. Far from the Main Sequence. Bad</li>
+					</ul>
+					<p>A component whose Distance is close to 1 should be examined</p>
+				</section>
+				<section>
+					<h3>Boundaries</h3>
+					<p>All these Principles are helpful to draw boundaries.</p>
+					<p>Boundaries can be, in order of strength:
+					<ul>
+					<li>Deployment component (Jar, dll...)</li>
+					<li>Local Processes (sockets)</li>
+					<li>Services (REST)</li>
+					</ul>
+					<p>The stronger the boundary, the more expensive to cross it (marshalling, serialize, network protocols...)
+				</section>
+				<section>
+					<div id="left">					
+						<img src="diagrams/Boundaries.svg"/>
+					</div>
+					<div id="right">		
+					<p>From inner circle to outer circle:</p>	
+						<div style="font-size:65%">		
+						<ul>
+						<li>Entities: Enterprise Business Rules</li>
+						<li>Use Cases: Application Business Rules</li>
+						<li>Interface Adapters</li>
+						<li>Frameworks and drivers</li>
+						</ul>
+						</div>
+					</div>
+				</section>
+				<section>					
+					<ul>
+					<li>Source code dependencies must point inward.</li>
+					<li>Nothing in an inner circle must know about outer circles.</li>
+					<li>Do not use Entities to cross boundaries, but simple, isolated data structures, convenient for the inner circle.</li>
+					</ul>
+				</section>
+				<section id="fragments">					
+					<p class="fragment">Frameworks</p>
+					<p class="fragment">Database</p>
+					<p class="fragment">Operating system</p>
+					<p class="fragment">Devices</p>
+					<p class="fragment">Are... <strong>Details</strong></p>																
+				</section>
+				<section>
+					<p>Architecture must be independent from <span class="customTextHighlight">Details.</span></p>
+					<p>Build the system to swap <span class="customTextHighlight">Details</span> easily.</p>
+					<p>The architecture lies on the <strong>Business Rules</strong>, not on the <span class="customTextHighlight">Framework.</span></p>
+				</section>
+				<section>
+					<h3>Some thoughts</h3>
+					<p>Agile Metholodogy let architects go back to coding instead of drawing boxes.</p>
+					<p>We hate duplication, but sometimes it's accidental.</p>
+					<p>Two architects might solve the same problem in two different ways, and the two solutions might be right.</p>
+				</section>
+				<section>
+					<h3>Read Clean Architecture!</h3>
+					<p>Done with reveal.js</p>
+					<p>Diagrams created with draw.io</p>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
